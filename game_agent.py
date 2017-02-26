@@ -175,34 +175,15 @@ class CustomPlayer:
                 to pass the project unit tests; you cannot call any other
                 evaluation function directly.
         """
+        assert depth > 0, 'depth must be a positive integer'
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
-
         legal_moves = game.get_legal_moves()
         if not legal_moves:
             return (-1, -1)
-
-        if not depth:
-            return self.score(game)
-
-        if maximizing_player:
-            value = float('-inf')
-            maxmin_fn = max
-        else:
-            value = float('inf')
-            maxmin_fn = min
-
-        losing_move = (value, (-1, -1))
-
-        mp = not maximizing_player
         depth -= 1
-        gen_moves = [(self.minimax(game.forecast_move(m), depth, mp), m)
-                     for m in legal_moves)] + [(value, None)]
-        _, move = maxmin_fn(gen_moves)
-
-        if not move:
-            raise ValueError('minimax did not generate a move')
-
+        board_moves = ((game.forecast_move(m), m) for m in legal_moves)
+        _, move = max((self.minvalue(b, depth), m), for b, m in board_moves))
         return move
 
     def maxvalue(self, game, depth):
