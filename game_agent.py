@@ -230,6 +230,31 @@ class CustomPlayer:
         return value
 
 
+    def minvalue(self, game, depth):
+        """Computes the minimum value of the current state of the game.
+
+        :param game
+            A game board.
+        :param depth
+            The remaining number of steps to explore before game is evalated
+            with heuristic function.
+        :return
+            The minimum value of a backed-up state.
+        """
+        assert depth >= 0, 'depth cannot be a negative value'
+        value = float('inf')
+        legal_moves = game.get_legal_moves()
+        if not legal_moves:
+            return value
+        if not depth:
+            return self.score(game)
+        depth -= 1
+        for m in legal_moves:
+            game_next_move = game.forecast_move(m)
+            value = min(value, self.maxvalue(game_next_move, depth))
+        return value
+
+
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
         """Implement minimax search with alpha-beta pruning as described in the
         lectures.
