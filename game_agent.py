@@ -275,7 +275,12 @@ class CustomPlayer:
         """
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
-        return self.minimax(game, depth)
+        legal_moves = game.get_legal_moves()
+        if not legal_moves:
+            return (float('-inf'), (-1, -1))
+        depth -= 1
+        bm = ((game.forecast_move(m), m) for m in legal_moves)
+        return max((self.minbeta(b, depth, alpha, beta), m) for b, m in bm)
 
     def maxalpha(self, game, depth, alpha, beta):
         """Computes the maximizing value of the current state of the game.
