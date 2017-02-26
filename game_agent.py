@@ -273,14 +273,22 @@ class CustomPlayer:
                 to pass the project unit tests; you cannot call any other
                 evaluation function directly.
         """
+        assert depth >= 0, 'depth cannot be negative'
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
-        legal_moves = game.get_legal_moves()
-        if not legal_moves:
-            return (float('-inf'), (-1, -1))
+        value_move = (float('-inf'), (-1, -1))
+        if not depth:
+            return value_move
         depth -= 1
-        bm = ((game.forecast_move(m), m) for m in legal_moves)
-        return max((self.minbeta(b, depth, alpha, beta), m) for b, m in bm)
+        for m in game.get_legal_moves():
+            game_next_move = game.forecast_move(m)
+            next_value = self.minbeta(game_next_move, depth, alpha, beta)
+            value_move = max(value_move, (next_value, m))
+            value = value_move[0]
+            if value >= beta:
+                break
+            alpha = max(alpha, value)
+        return value_move
 
     def maxalpha(self, game, depth, alpha, beta):
         """Computes the maximizing value of the current state of the game.
