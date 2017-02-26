@@ -178,8 +178,57 @@ class CustomPlayer:
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
 
-        # TODO: finish this function!
-        raise NotImplementedError
+        legal_moves = game.get_legal_moves()
+        if not legal_moves:
+            return (-1, -1)
+
+        if not depth:
+            return self.score(game)
+
+        if maximizing_player:
+            value = float('-inf')
+            maxmin_fn = max
+        else:
+            value = float('inf')
+            maxmin_fn = min
+
+        losing_move = (value, (-1, -1))
+
+        mp = not maximizing_player
+        depth -= 1
+        gen_moves = [(self.minimax(game.forecast_move(m), depth, mp), m)
+                     for m in legal_moves)] + [(value, None)]
+        _, move = maxmin_fn(gen_moves)
+
+        if not move:
+            raise ValueError('minimax did not generate a move')
+
+        return move
+
+    def maxvalue(self, game, depth):
+        """Computes the maximizing value of the current state of the game.
+
+        :param game
+            A game board.
+        :param depth
+            The remaining number of steps to explore before game is evalated
+            with heuristic function.
+        :return
+            The maximum value of a backed-up state.
+        """
+        assert depth >= 0, 'depth cannot be a negative value'
+        value = float('-inf')
+        legal_moves = game.get_legal_moves()
+        if not legal_moves:
+            return value
+        if not depth:
+            return self.score(game)
+        depth -= 1
+        for m in legal_moves:
+            game_next_move = game.forecast_move(m)
+            value = max(value, self.minvalue(game_next_move, depth))
+        return value
+
 
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
         """Implement minimax search with alpha-beta pruning as described in the
