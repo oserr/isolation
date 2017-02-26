@@ -302,7 +302,8 @@ class CustomPlayer:
         depth -= 1
         for m in legal_moves:
             game_next_move = game.forecast_move(m)
-            value = max(value, self.minbeta(game_next_move, depth), alpha, beta)
+            next_value = self.minbeta(game_next_move, depth, alpha, beta)
+            value = max(value, next_value)
             if value >= beta:
                 return value
             alpha = max(alpha, value)
