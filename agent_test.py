@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# agent_test.py
 """
 This file contains test cases to verify the correct implementation of the
 functions required for this project including minimax, alphabeta, and iterative
