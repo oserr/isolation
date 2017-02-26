@@ -191,7 +191,7 @@ class CustomPlayer:
         :param game
             A game board.
         :param depth
-            The remaining number of steps to explore before game is evalated
+            The remaining number of steps to explore before game is evaluated
             with heuristic function.
         :return
             The maximum value of a backed-up state.
@@ -216,7 +216,7 @@ class CustomPlayer:
         :param game
             A game board.
         :param depth
-            The remaining number of steps to explore before game is evalated
+            The remaining number of steps to explore before game is evaluated
             with heuristic function.
         :return
             The minimum value of a backed-up state.
@@ -277,3 +277,33 @@ class CustomPlayer:
             raise Timeout()
         return self.minimax(game, depth)
 
+    def maxalpha(self, game, depth, alpha, beta):
+        """Computes the maximizing value of the current state of the game.
+
+        :param game
+            A game board.
+        :param depth
+            The remaining number of steps to explore before game is evaluated
+            with heuristic function.
+        :param alpha
+            The current alpha value.
+        :param beta
+            The current beta value.
+        :return
+            The maximum value of a backed-up state.
+        """
+        assert depth >= 0, 'depth cannot be a negative value'
+        value = float('-inf')
+        legal_moves = game.get_legal_moves()
+        if not legal_moves:
+            return value
+        if not depth:
+            return self.score(game, game.active_player)
+        depth -= 1
+        for m in legal_moves:
+            game_next_move = game.forecast_move(m)
+            value = max(value, self.minbeta(game_next_move, depth), alpha, beta)
+            if value >= beta:
+                return value
+            alpha = max(alpha, value)
+        return value
