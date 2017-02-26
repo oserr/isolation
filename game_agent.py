@@ -115,7 +115,7 @@ class CustomPlayer:
             Board coordinates corresponding to a legal move; may return
             (-1, -1) if there are no available legal moves.
         """
-        if self.methot == 'minimax':
+        if self.method == 'minimax':
             search_fn = self.minimax
         elif self.method == 'alphabeta':
             search_fn = self.alphabeta
@@ -203,7 +203,7 @@ class CustomPlayer:
         if not legal_moves:
             return value
         if not depth:
-            return self.score(game)
+            return self.score(game, game.active_player)
         depth -= 1
         for m in legal_moves:
             game_next_move = game.forecast_move(m)
@@ -228,7 +228,7 @@ class CustomPlayer:
         if not legal_moves:
             return value
         if not depth:
-            return self.score(game)
+            return self.score(game, game.active_player)
         depth -= 1
         for m in legal_moves:
             game_next_move = game.forecast_move(m)
