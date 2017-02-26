@@ -183,7 +183,7 @@ class CustomPlayer:
             return (-1, -1)
         depth -= 1
         board_moves = ((game.forecast_move(m), m) for m in legal_moves)
-        _, move = max((self.minvalue(b, depth), m), for b, m in board_moves))
+        _, move = max((self.minvalue(b, depth), m) for b, m in board_moves)
         return move
 
     def maxvalue(self, game, depth):
