@@ -136,7 +136,7 @@ class CustomPlayer:
             # here in order to avoid timeout. The try/except block will
             # automatically catch the exception raised by the search method
             # when the timer gets close to expiring
-            move = search_fn(game, self.search_depth)
+            _, move = search_fn(game, self.search_depth)
         except Timeout:
             # Handle any actions required at timeout, if necessary
             pass
@@ -180,11 +180,10 @@ class CustomPlayer:
             raise Timeout()
         legal_moves = game.get_legal_moves()
         if not legal_moves:
-            return (-1, -1)
+            return (float('-inf'), (-1, -1))
         depth -= 1
         board_moves = ((game.forecast_move(m), m) for m in legal_moves)
-        _, move = max((self.minvalue(b, depth), m) for b, m in board_moves)
-        return move
+        return max((self.minvalue(b, depth), m) for b, m in board_moves)
 
     def maxvalue(self, game, depth):
         """Computes the maximizing value of the current state of the game.
@@ -276,6 +275,5 @@ class CustomPlayer:
         """
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
+        return self.minimax(game, depth)
 
-        # TODO: finish this function!
-        raise NotImplementedError
