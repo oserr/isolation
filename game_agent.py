@@ -73,7 +73,7 @@ class CustomPlayer:
 
     def __init__(self, search_depth=3, score_fn=custom_score,
                  iterative=True, method='minimax', timeout=10.):
-        self.search_depth = search_depth
+        self.search_depth = search_depth if search_depth > 0 else float('inf')
         self.iterative = iterative
         self.score = score_fn
         self.method = method
