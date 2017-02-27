@@ -273,12 +273,10 @@ class CustomPlayer:
                 to pass the project unit tests; you cannot call any other
                 evaluation function directly.
         """
-        assert depth >= 0, 'depth cannot be negative'
+        assert depth > 0, 'depth must be positive'
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
         value_move = (float('-inf'), (-1, -1))
-        if not depth:
-            return value_move
         depth -= 1
         for m in game.get_legal_moves():
             game_next_move = game.forecast_move(m)
