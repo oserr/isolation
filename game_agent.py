@@ -227,7 +227,7 @@ class CustomPlayer:
         if not legal_moves:
             return value
         if not depth:
-            return self.score(game, game.active_player)
+            return self.score(game, game.inactive_player)
         depth -= 1
         for m in legal_moves:
             game_next_move = game.forecast_move(m)
