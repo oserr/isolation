@@ -37,9 +37,40 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
+    if game.is_winner(player):
+        return float('inf')
+    if game.is_loser(player):
+        return float('-inf')
     my_moves = len(game.get_legal_moves(player))
     enemy_moves = len(game.get_legal_moves(game.get_opponent(player)))
     return float(my_moves - enemy_moves)
+
+
+def choose_best(moves):
+    """Choses the best move among a list of moves.
+
+    :param moves
+        A list of tuples (value, move)
+        - value is the value of the move
+        - move is the move
+    :return
+        The move with the highest value. If more than one move have the
+        highest value, then select one randomly.
+    """
+    assert len(moves) > 0, 'moves needs to contain at least one move'
+    if len(moves) == 1:
+        return moves[0]
+    moves = sorted(moves, reverse=True)
+    i = 1
+    while True:
+        valueLast = moves[i-1][0]
+        valueNext = moves[i][0]
+        if valueLast != valueNext:
+            break
+        i += 1
+    if i == 1:
+        return moves[0]
+    return random.choice(moves[0:i])
 
 
 class CustomPlayer:
@@ -117,6 +148,17 @@ class CustomPlayer:
             (-1, -1) if there are no available legal moves.
         """
         self.time_left = time_left
+        if game.move_count <= 1:
+            if game.move_count == 0:
+                # Move to center of board.
+                return (game.height // 2, game.width // 2)
+            elif game.move_count == 1:
+                # Move to center of board if not taken.
+                square = (game.height // 2, game.width // 2)
+                if square in game.get_blank_spaces():
+                    return square
+                # Opponent has center square, so move to non-symmetric square.
+            #else:
         search_fn = self.minimax if self.method == 'minimax' else self.alphabeta
         value_move = (float('-inf'), (-1, -1))
 
@@ -199,9 +241,7 @@ class CustomPlayer:
         assert depth >= 0, 'depth cannot be a negative value'
         value = float('-inf')
         legal_moves = game.get_legal_moves()
-        if not legal_moves:
-            return value
-        if not depth:
+        if not legal_moves or not depth:
             return self.score(game, game.active_player)
         depth -= 1
         for m in legal_moves:
@@ -224,9 +264,7 @@ class CustomPlayer:
         assert depth >= 0, 'depth cannot be a negative value'
         value = float('inf')
         legal_moves = game.get_legal_moves()
-        if not legal_moves:
-            return value
-        if not depth:
+        if not legal_moves or not depth:
             return self.score(game, game.inactive_player)
         depth -= 1
         for m in legal_moves:
@@ -306,9 +344,7 @@ class CustomPlayer:
         assert depth >= 0, 'depth cannot be a negative value'
         value = float('-inf')
         legal_moves = game.get_legal_moves()
-        if not legal_moves:
-            return value
-        if not depth:
+        if not legal_moves or not depth:
             return self.score(game, game.active_player)
         depth -= 1
         for m in legal_moves:
@@ -338,9 +374,7 @@ class CustomPlayer:
         assert depth >= 0, 'depth cannot be a negative value'
         value = float('inf')
         legal_moves = game.get_legal_moves()
-        if not legal_moves:
-            return value
-        if not depth:
+        if not legal_moves or not depth:
             return self.score(game, game.active_player)
         depth -= 1
         for m in legal_moves:
