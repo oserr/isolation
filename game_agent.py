@@ -44,7 +44,7 @@ def custom_score(game, player):
         return float('-inf')
     my_moves = len(game.get_legal_moves(player))
     enemy_moves = len(game.get_legal_moves(game.get_opponent(player)))
-    return float(my_moves - enemy_moves) + compute_location_value(game, player)
+    return float(my_moves - enemy_moves) - get_player_distance(game)
 
 
 def get_player_distance(game):
