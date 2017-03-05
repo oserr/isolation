@@ -61,7 +61,7 @@ def custom_score(game, player):
         return float('inf')
     if game.is_loser(player):
         return float('-inf')
-    return moves_minus_distance(game, player)
+    return moves_minus_manhattan_distance(game, player)
 
 
 def moves_diff(game, player):
@@ -97,6 +97,7 @@ def moves_minus_distance(game, player):
         The heuristic value of the current game state to the specified player.
     """
     return moves_diff(game, player) - get_player_distance(game)
+
 
 def moves_minus_manhattan_distance(game, player):
     """Calculate the heuristic value of a game state from the point of view
@@ -461,6 +462,79 @@ class CustomPlayer:
             game_next_move = game.forecast_move(m)
             value = min(value, self.maxvalue(game_next_move, depth))
         return value
+
+
+    def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
+        """Implement minimax search with alpha-beta pruning as described in the
+        lectures.
+
+        Parameters
+        ----------
+        game : isolation.Board
+            An instance of the Isolation game `Board` class representing the
+            current game state
+
+        depth : int
+            Depth is an integer representing the maximum number of plies to
+            search in the game tree before aborting
+
+        alpha : float
+            Alpha limits the lower bound of search on minimizing layers
+
+        beta : float
+            Beta limits the upper bound of search on maximizing layers
+
+        maximizing_player : bool
+            Flag indicating whether the current search depth corresponds to a
+            maximizing layer (True) or a minimizing layer (False)
+
+        Returns
+        -------
+        float
+            The score for the current search branch
+
+        tuple(int, int)
+            The best move for the current branch; (-1, -1) for no legal moves
+
+        Notes
+        -----
+            (1) You MUST use the `self.score()` method for board evaluation
+                to pass the project unit tests; you cannot call any other
+                evaluation function directly.
+        """
+        assert depth >= 0, 'depth must be nonnegative'
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise Timeout()
+        legal_moves = game.get_legal_moves()
+        if maximizing_player:
+            value_move = (float('-inf'), (-1,-1))
+            if not legal_moves:
+                return value_move
+            if not depth:
+                return (self.score(game, game.active_player), None)
+            depth -= 1
+            for m in legal_moves:
+                child_board = game.forecase_move(m)
+                value, _ = self.alphabeta(child_board, depth, alpha, beta, False)
+                value_move = max(value_move, (value, m))
+                alpha = max(alpha, value)
+                if beta <= alpha:
+                    break
+        else:
+            value_move = (float('inf'), None)
+            if not legal_moves:
+                return value_move
+            if not depth:
+                return (self.score(game, game.inactive_player), None)
+            depth -= 1
+            for m in legal_moves:
+                child_board = game.forecase_move(m)
+                value, _ = self.alphabeta(child_board, depth, alpha, beta, True)
+                value_move = min(value_move, (value, m))
+                beta = min(beta, value)
+                if beta <= alpha:
+                    break
+        return value_move
 
 
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
