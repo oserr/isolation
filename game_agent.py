@@ -7,6 +7,7 @@ You must test your agent's strength against a set of agents with known
 relative strength using tournament.py and include the results in your report.
 """
 import random
+import math
 import sys
 
 
@@ -44,6 +45,19 @@ def custom_score(game, player):
     my_moves = len(game.get_legal_moves(player))
     enemy_moves = len(game.get_legal_moves(game.get_opponent(player)))
     return float(my_moves - enemy_moves) + compute_location_value(game, player)
+
+
+def get_player_distance(game):
+    """Computes the euclidean distance between the two players on the board.
+
+    :param game
+        The current game board.
+    """
+    p1 = game.get_player_location(game.active_player)
+    p2 = game.get_player_location(game.inactive_player)
+    x_part = (p1[0] - p2[0])**2
+    y_part = (p1[1] - p2[1])**2
+    return math.sqrt(x_part + y_part)
 
 
 def compute_location_value(game, player):
@@ -88,8 +102,6 @@ class CutoffPoint:
         self.num_cols = game.width
         self.center_row = self.num_rows // 2
         self.center_col = self.num_cols // 2
-        self.center_points = (0, 0)
-        self.edge_points = (0, 0)
         self.init_cutoff_points()
 
     def init_cutoff_points(self):
@@ -97,8 +109,10 @@ class CutoffPoint:
         y_unit = self.num_rows / 3
         x_unit = self.num_cols / 3
         self.center_points = (self.center_row+y_unit, self.center_col+x_unit)
-        self.edge_points[0] = self.center_points[0] + y_unit
-        self.edge_points[1] = self.center_points[1] + x_unit
+        self.edge_points = (
+            self.center_points[0] + y_unit,
+            self.center_points[1] + x_unit
+        )
 
     def is_center(self, location):
         """Returns true if player is located toward center of board, false
