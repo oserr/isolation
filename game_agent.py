@@ -46,29 +46,33 @@ def custom_score(game, player):
     return float(my_moves - enemy_moves)
 
 
-def choose_best(moves):
+def choose_best(moves, maximize=True):
     """Choses the best move among a list of moves.
 
     :param moves
         A list of tuples (value, move)
         - value is the value of the move
         - move is the move
+    :param maximize
+        Boolean value that indicates if best represents a maximum or minimum
+        value.
     :return
         The move with the highest value. If more than one move have the
         highest value, then select one randomly.
     """
     assert len(moves) > 0, 'moves needs to contain at least one move'
-    if len(moves) == 1:
+    length = len(moves)
+    if length == 1:
         return moves[0]
-    moves = sorted(moves, reverse=True)
+    moves = sorted(moves, reverse=maximize)
     i = 1
-    while True:
+    while i < length:
         valueLast = moves[i-1][0]
         valueNext = moves[i][0]
         if valueLast != valueNext:
             break
         i += 1
-    if i == 1:
+    else:
         return moves[0]
     return random.choice(moves[0:i])
 
@@ -225,7 +229,8 @@ class CustomPlayer:
             return (float('-inf'), (-1, -1))
         depth -= 1
         board_moves = ((game.forecast_move(m), m) for m in legal_moves)
-        return max((self.minvalue(b, depth), m) for b, m in board_moves)
+        moves = [(self.minvalue(b, depth), m) for b, m in board_moves]
+        return choose_best(moves)
 
     def maxvalue(self, game, depth):
         """Computes the maximizing value of the current state of the game.
@@ -316,14 +321,18 @@ class CustomPlayer:
             raise Timeout()
         value_move = (float('-inf'), (-1, -1))
         depth -= 1
+        moves = []
         for m in game.get_legal_moves():
             game_next_move = game.forecast_move(m)
             next_value = self.minbeta(game_next_move, depth, alpha, beta)
             value_move = max(value_move, (next_value, m))
+            moves.append(value_move)
             value = value_move[0]
             if value >= beta:
                 break
             alpha = max(alpha, value)
+        if moves:
+            value_move = choose_best(moves)
         return value_move
 
     def maxalpha(self, game, depth, alpha, beta):
