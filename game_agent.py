@@ -107,6 +107,7 @@ class CutoffPoint:
         :param location
             A (row, column) tuple.
         """
+        location = self.normalize_location(location)
         return location[0] <= self.center_points[0] \
             and location[1] <= self.center_points[1]
 
@@ -117,6 +118,7 @@ class CutoffPoint:
         :param location
             A (row, column) tuple.
         """
+        location = self.normalize_location(location)
         return location[0] <= self.edge_points[0] \
             and location[1] <= self.edge_points[1]
 
