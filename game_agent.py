@@ -42,9 +42,8 @@ def custom_score(game, player):
         return float('inf')
     if game.is_loser(player):
         return float('-inf')
-    my_moves = len(game.get_legal_moves(player))
-    enemy_moves = len(game.get_legal_moves(game.get_opponent(player)))
-    return float(my_moves - enemy_moves) - get_player_distance(game)
+    return moves_minus_distance(game, player)
+
 
 def moves_minus_distance(game, player):
     """Calculate the heuristic value of a game state from the point of view
