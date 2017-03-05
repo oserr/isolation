@@ -57,11 +57,7 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    if game.is_winner(player):
-        return float('inf')
-    if game.is_loser(player):
-        return float('-inf')
-    return moves_minus_manhattan_distance(game, player)
+    return get_manhattan_distance(game)
 
 
 def moves_diff(game, player):
@@ -507,11 +503,15 @@ class CustomPlayer:
             raise Timeout()
         legal_moves = game.get_legal_moves()
         if maximizing_player:
+            player = game.active_player
+            last_move = game.get_player_location(player)
+            if game.is_winner(player):
+                return (float('inf'), last_move)
+            if game.is_loser(player):
+                return (float('-inf'), last_move)
             value_move = (float('-inf'), (-1,-1))
-            if not legal_moves:
-                return value_move
             if not depth:
-                return (self.score(game, game.active_player), None)
+                return (self.score(game, player), last_move)
             depth -= 1
             for m in legal_moves:
                 child_board = game.forecast_move(m)
@@ -521,12 +521,15 @@ class CustomPlayer:
                 if beta <= alpha:
                     break
         else:
+            player = game.inactive_player
             last_move = game.get_player_location(game.inactive_player)
+            if game.is_winner(player):
+                return (float('inf'), last_move)
+            if game.is_loser(player):
+                return (float('-inf'), last_move)
             value_move = (float('inf'), last_move)
-            if not legal_moves:
-                return value_move
             if not depth:
-                return (self.score(game, game.inactive_player), last_move)
+                return (self.score(game, player), last_move)
             depth -= 1
             for m in legal_moves:
                 child_board = game.forecast_move(m)
