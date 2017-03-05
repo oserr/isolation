@@ -122,7 +122,7 @@ class CutoffPoint:
         return location[0] <= self.edge_points[0] \
             and location[1] <= self.edge_points[1]
 
-    def normalize_location(self, location)
+    def normalize_location(self, location):
         """Normalizes a board location with respect to the center row and
         column.
 
