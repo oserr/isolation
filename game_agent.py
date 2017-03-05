@@ -112,6 +112,19 @@ def get_player_distance(game):
     return math.sqrt(x_part + y_part)
 
 
+def get_manhattan_distance(game):
+    """Computes the Manhattan distance between the two players on the board.
+
+    :param game
+        The current game board.
+    """
+    p1 = game.get_player_location(game.active_player)
+    p2 = game.get_player_location(game.inactive_player)
+    x_part = abs(p1[0] - p2[0])
+    y_part = abs(p1[1] - p2[1])
+    return float(x_part + y_part)
+
+
 def compute_location_value(game, player):
     """Computes the value of the player's location, with higher values for
     locations that are closer to the center.
