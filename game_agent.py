@@ -6,14 +6,33 @@ augment the test suite with your own test cases to further test your code.
 You must test your agent's strength against a set of agents with known
 relative strength using tournament.py and include the results in your report.
 """
-import random
+import functools
 import math
+import random
 import sys
 
 
 class Timeout(Exception):
     """Subclass base exception for code clarity."""
     pass
+
+
+def winner_or_loser(func):
+    """Wraps a heuristic function taking two paramers.
+
+    :param func
+        A heuristic function with signature float(game, player).
+    :return
+        Function with same signature as func.
+    """
+    @functools.wrap(func)
+    def wrapper(game, player):
+        if game.is_winner(player):
+            return float('inf')
+        if game.is_loser(player):
+            return float('-inf')
+        return func(game, player)
+    return wrapper
 
 
 def custom_score(game, player):
