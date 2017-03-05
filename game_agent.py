@@ -453,14 +453,18 @@ class CustomPlayer:
             The minimum value of a backed-up state.
         """
         assert depth >= 0, 'depth cannot be a negative value'
+        player = game.inactive_player
+        if game.is_winner(player):
+            return float('inf')
+        if game.is_loser(player):
+            return float('-inf')
+        if not depth:
+            return self.score(game, player)
         value = float('inf')
-        legal_moves = game.get_legal_moves()
-        if not legal_moves or not depth:
-            return self.score(game, game.inactive_player)
         depth -= 1
-        for m in legal_moves:
-            game_next_move = game.forecast_move(m)
-            value = min(value, self.maxvalue(game_next_move, depth))
+        for m in game.get_legal_moves():
+            child_game = game.forecast_move(m)
+            value = min(value, self.maxvalue(child_game, depth))
         return value
 
 
