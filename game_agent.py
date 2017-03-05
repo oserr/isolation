@@ -514,21 +514,22 @@ class CustomPlayer:
                 return (self.score(game, game.active_player), None)
             depth -= 1
             for m in legal_moves:
-                child_board = game.forecase_move(m)
+                child_board = game.forecast_move(m)
                 value, _ = self.alphabeta(child_board, depth, alpha, beta, False)
                 value_move = max(value_move, (value, m))
                 alpha = max(alpha, value)
                 if beta <= alpha:
                     break
         else:
-            value_move = (float('inf'), None)
+            last_move = game.get_player_location(game.inactive_player)
+            value_move = (float('inf'), last_move)
             if not legal_moves:
                 return value_move
             if not depth:
-                return (self.score(game, game.inactive_player), None)
+                return (self.score(game, game.inactive_player), last_move)
             depth -= 1
             for m in legal_moves:
-                child_board = game.forecase_move(m)
+                child_board = game.forecast_move(m)
                 value, _ = self.alphabeta(child_board, depth, alpha, beta, True)
                 value_move = min(value_move, (value, m))
                 beta = min(beta, value)
@@ -537,7 +538,7 @@ class CustomPlayer:
         return value_move
 
 
-    def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
+    def _alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
         """Implement minimax search with alpha-beta pruning as described in the
         lectures.
 
