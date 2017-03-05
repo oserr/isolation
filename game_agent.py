@@ -74,6 +74,59 @@ def compute_location_value(game, player):
         return .25
 
 
+class CutoffPoint:
+    """A utility class that computes two cutoff points where the board is
+    roughly split into outer edge, inner edge, and center.
+    """
+
+    def __init__(self, game):
+        """Initializes the CutoffPoint instance with a game, which are used to
+        obtain dimensions of the board and the current location of the player.
+
+        :param game
+            The current board game.
+        """
+        if game.height < 4 or game.width < 4:
+            raise ValueError('board is too small for this class to be useful')
+        self.num_rows = game.height
+        self.num_cols = game.width
+        self.center_row = self.num_rows // 2
+        self.center_col = self.num_cols // 2
+        self.normal_row = abs(row - self.center_row)
+        self.normal_col = abs(col - self.center_col)
+        self.center_points = (0, 0)
+        self.edge_points = (0, 0)
+        self.init_cutoff_points()
+
+    def init_cutoff_points(self):
+        """Initializes the center and inner edge points."""
+        y_unit = self.num_rows / 3
+        x_unit = self.num_cols / 3
+        self.center_points = (self.center_row+y_unit, self.center_col+x_unit)
+        self.edge_points[0] = self.center_points[0] + y_unit
+        self.edge_points[1] = self.center_points[1] + x_unit
+
+    def is_center(self, location):
+        """Returns true if player is located toward center of board, false
+        otherwise.
+
+        :param location
+            A (row, column) tuple.
+        """
+        return location[0] <= self.center_points[0] \
+            and location[1] <= self.center_points[1]
+
+    def is_inner_edge(self, location):
+        """Returns true if player is located somewhere in the inner edge of the
+        board, false otherwise.
+
+        :param location
+            A (row, column) tuple.
+        """
+        return location[0] <= self.edge_points[0] \
+            and location[1] <= self.edge_points[1]
+
+
 def choose_best(moves, maximize=True):
     """Choses the best move among a list of moves.
 
