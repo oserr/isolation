@@ -60,15 +60,11 @@ def compute_location_value(game, player):
     # Don't evaluate for boards that are particularly small.
     if game.height < 4 or game.width < 4:
         return 0
-    center_row = game.height // 2
-    center_col = game.width // 2
-    row, col = game.get_player_location(player)
-    normal_row = abs(row - center_row)
-    normal_col = abs(col - center_col)
-    cutoff_pairs = get_cutoff_points(game, normal_row, normal_col)
-    if normal_row <= cutoff_pairs[0][0] and normal_col <= cutoff_pairs[0][1]:
+    cutoff_point = CutoffPoint(game)
+    location = game.get_player_location(player)
+    if cutoff_point.is_center(location):
         return .75
-    elif normal_row <= cutoff_pairs[1][0] and normal_col <= cutoff_pairs[1][1]:
+    elif cutoff_point.is_inner_edge(location):
         return .50
     else:
         return .25
