@@ -43,7 +43,35 @@ def custom_score(game, player):
         return float('-inf')
     my_moves = len(game.get_legal_moves(player))
     enemy_moves = len(game.get_legal_moves(game.get_opponent(player)))
-    return float(my_moves - enemy_moves)
+    return float(my_moves - enemy_moves) + compute_location_value(game, player)
+
+
+def compute_location_value(game, player):
+    """Computes the value of the player's location, with higher values for
+    locations that are closer to the center.
+
+    :param game
+        The current game board.
+    :param player
+        The player whose location is being evaluated.
+    :return
+        The value of the location as a float.
+    """
+    # Don't evaluate for boards that are particularly small.
+    if game.height < 4 or game.width < 4:
+        return 0
+    center_row = game.height // 2
+    center_col = game.width // 2
+    row, col = game.get_player_location(player)
+    normal_row = abs(row - center_row)
+    normal_col = abs(col - center_col)
+    cutoff_pairs = get_cutoff_points(game, normal_row, normal_col)
+    if normal_row <= cutoff_pairs[0][0] and normal_col <= cutoff_pairs[0][1]:
+        return .75
+    elif normal_row <= cutoff_pairs[1][0] and normal_col <= cutoff_pairs[1][1]:
+        return .50
+    else:
+        return .25
 
 
 def choose_best(moves, maximize=True):
