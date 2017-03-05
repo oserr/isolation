@@ -88,8 +88,6 @@ class CutoffPoint:
         self.num_cols = game.width
         self.center_row = self.num_rows // 2
         self.center_col = self.num_cols // 2
-        self.normal_row = abs(row - self.center_row)
-        self.normal_col = abs(col - self.center_col)
         self.center_points = (0, 0)
         self.edge_points = (0, 0)
         self.init_cutoff_points()
@@ -121,6 +119,20 @@ class CutoffPoint:
         """
         return location[0] <= self.edge_points[0] \
             and location[1] <= self.edge_points[1]
+
+    def normalize_location(self, location)
+        """Normalizes a board location with respect to the center row and
+        column.
+
+        :param location
+            A (row, column) tuple.
+        :return
+            A (row, column) tuple, where the row and column represent the
+            absolute distance from the center row and columns.
+        """
+        normal_row = abs(location[0] - self.center_row)
+        normal_col = abs(location[1] - self.center_col)
+        return (normal_row, normal_col)
 
 
 def choose_best(moves, maximize=True):
