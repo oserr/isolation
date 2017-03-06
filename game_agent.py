@@ -73,7 +73,8 @@ def avg_distance_to_blank_squares(game, player):
     blank_spaces = game.get_blank_spaces()
     assert blank_spaces, 'cannot divide by zero'
     location = game.get_player_location(player)
-    return sum(distance(location, s) for s in blank_spaces) / len(blank_spaces)
+    total_distance = sum(compute_distance(location, s) for s in blank_spaces)
+    return total_distance / len(blank_spaces)
 
 
 def custom_score(game, player):
@@ -98,7 +99,14 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    return moves_diff(game, player)
+    return -avg_distance_over_avg_distance(game, player)
+
+
+def avg_distance_over_avg_distance(game, player):
+    small_average_good = avg_distance_to_blank_squares(game, player)
+    opponent = game.get_opponent(player)
+    high_average_good = avg_distnace_to_blank_squares(game, opponent)
+    return small_avg_good / high_average_good
 
 
 def moves_diff(game, player):
