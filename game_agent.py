@@ -367,11 +367,13 @@ class CustomPlayer:
         if game.move_count <= 1:
             if game.move_count == 0:
                 # Move to center of board.
-                return (game.height // 2, game.width // 2)
+                return get_center(game)
             elif game.move_count == 1:
                 # Move to center of board if not taken.
+                center_point = Point(get_center(game))
                 other_moves = game.get_legal_moves(game.inactive_player)
-                return random.choice(other_moves)
+                return center_point.closest(other_moves)
+                #return random.choice(other_moves)
         value_move = (float('-inf'), (-1, -1))
 
         # TODO: finish this function!
