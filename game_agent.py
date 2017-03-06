@@ -159,6 +159,13 @@ def get_player_distance(game):
     return math.sqrt(x_part + y_part)
 
 
+def compute_distance(point_a, point_b):
+    """Computes the euclidean distance between two points."""
+    x_part = (point_a[0] - point_b[0])**2
+    y_part = (point_a[1] - point_b[1])**2
+    return math.sqrt(x_part + y_part)
+
+
 def get_manhattan_distance(game):
     """Computes the Manhattan distance between the two players on the board.
 
@@ -555,6 +562,7 @@ class CustomPlayer:
                 alpha = max(alpha, value)
                 if beta <= alpha:
                     break
+            return value_move
         else:
             player = game.inactive_player
             last_move = game.get_player_location(game.inactive_player)
@@ -571,4 +579,4 @@ class CustomPlayer:
                 beta = min(beta, value)
                 if beta <= alpha:
                     break
-        return value_move
+            return value_move
