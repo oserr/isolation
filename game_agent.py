@@ -35,9 +35,8 @@ class Point:
 
     def distance(self, p):
         """Returns the euclidean distance between this point and point p."""
-        x_part = (self.x - p[0])**2
-        y_part = (self.y - p[1])**2
-        return math.sqrt(x_part + y_part)
+        this_point = (self.x, self.y)
+        return compute_distance(this_point, p)
 
     def closest(self, point_list):
         """Returns the closes point found closest to this point."""
