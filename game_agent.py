@@ -513,11 +513,9 @@ class CustomPlayer:
         if maximizing_player:
             player = game.active_player
             last_move = game.get_player_location(player)
-            if game.is_winner(player):
-                return (float('inf'), last_move)
-            if game.is_loser(player):
-                return (float('-inf'), last_move)
-            value_move = (float('-inf'), (-1,-1))
+            value_move = (float('-inf'), last_move)
+            if not legal_moves:
+                return value_move
             if not depth:
                 return (self.score(game, player), last_move)
             depth -= 1
@@ -531,11 +529,9 @@ class CustomPlayer:
         else:
             player = game.inactive_player
             last_move = game.get_player_location(game.inactive_player)
-            if game.is_winner(player):
-                return (float('inf'), last_move)
-            if game.is_loser(player):
-                return (float('-inf'), last_move)
             value_move = (float('inf'), last_move)
+            if not legal_moves:
+                return value_move
             if not depth:
                 return (self.score(game, player), last_move)
             depth -= 1
@@ -547,7 +543,6 @@ class CustomPlayer:
                 if beta <= alpha:
                     break
         return value_move
-
 
     def _alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
         """Implement minimax search with alpha-beta pruning as described in the
