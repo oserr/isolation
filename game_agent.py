@@ -99,14 +99,24 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    return -avg_distance_over_avg_distance(game, player)
+    return -avg_distance_to_blank_squares(game, player)
+
+
+def moves_minus_avg_distance(game, player):
+    num_moves = len(game.get_legal_moves(player))
+    return num_moves - avg_distance_to_blank_squares(game, player)
+
+
+def avg_distance_for_opponent(game, player):
+    opponent = game.get_opponent(player)
+    return avg_distance_to_blank_squares(game, opponent)
 
 
 def avg_distance_over_avg_distance(game, player):
-    small_average_good = avg_distance_to_blank_squares(game, player)
+    small_avg_good = avg_distance_to_blank_squares(game, player)
     opponent = game.get_opponent(player)
-    high_average_good = avg_distnace_to_blank_squares(game, opponent)
-    return small_avg_good / high_average_good
+    high_avg_good = avg_distance_to_blank_squares(game, opponent)
+    return small_avg_good / high_avg_good
 
 
 def moves_diff(game, player):
