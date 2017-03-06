@@ -34,6 +34,13 @@ class Point:
         return point
 
 
+def get_center(game):
+    """Compute the center of the board."""
+    row = game.height // 2
+    col = game.width // 2
+    return (row, col)
+
+
 def winner_or_loser(func):
     """Wraps a heuristic function taking two paramers.
 
