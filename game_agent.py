@@ -154,9 +154,7 @@ def get_player_distance(game):
     """
     p1 = game.get_player_location(game.active_player)
     p2 = game.get_player_location(game.inactive_player)
-    x_part = (p1[0] - p2[0])**2
-    y_part = (p1[1] - p2[1])**2
-    return math.sqrt(x_part + y_part)
+    return compute_distance(p1, p2)
 
 
 def compute_distance(point_a, point_b):
