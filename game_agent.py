@@ -398,17 +398,7 @@ class CustomPlayer:
                 #return random.choice(other_moves)
         value_move = (float('-inf'), (-1, -1))
 
-        # TODO: finish this function!
-
-        # Perform any required initializations, including selecting an initial
-        # move from the game board (i.e., an opening book), or returning
-        # immediately if there are no legal moves
-
         try:
-            # The search method call (alpha beta or minimax) should happen in
-            # here in order to avoid timeout. The try/except block will
-            # automatically catch the exception raised by the search method
-            # when the timer gets close to expiring
             if not self.iterative:
                 if self.method == 'minimax':
                     value_move = self.minimax(game, self.search_depth)
