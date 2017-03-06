@@ -403,6 +403,66 @@ class CustomPlayer:
                 to pass the project unit tests; you cannot call any other
                 evaluation function directly.
         """
+        assert depth >= 0, 'depth must be a positive integer'
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise Timeout()
+        legal_moves = game.get_legal_moves()
+        if maximizing_player:
+            value_move = (float('-inf'), (-1, -1))
+            if not legal_moves:
+                return value_move
+            if not depth:
+                return (self.score(game, game.active_player), (1, 1))
+            depth -= 1
+            for m in legal_moves:
+                child_board = game.forecast_move(m)
+                value, _ = self.minimax(child_board, depth, False)
+                value_move = max(value_move, (value, m))
+            return value_move
+        else:
+            value_move = (float('inf'), (-1, -1))
+            if not legal_moves:
+                return value_move
+            if not depth:
+                return (self.score(game, game.inactive_player), (1, 1))
+            depth -= 1
+            for m in legal_moves:
+                child_board = game.forecast_move(m)
+                value, _ = self.minimax(child_board, depth, True)
+                value_move = min(value_move, (value, m))
+            return value_move
+
+    def _minimax(self, game, depth, maximizing_player=True):
+        """Implement the minimax search algorithm as described in the lectures.
+
+        Parameters
+        ----------
+        game : isolation.Board
+            An instance of the Isolation game `Board` class representing the
+            current game state
+
+        depth : int
+            Depth is an integer representing the maximum number of plies to
+            search in the game tree before aborting
+
+        maximizing_player : bool
+            Flag indicating whether the current search depth corresponds to a
+            maximizing layer (True) or a minimizing layer (False)
+
+        Returns
+        -------
+        float
+            The score for the current search branch
+
+        tuple(int, int)
+            The best move for the current branch; (-1, -1) for no legal moves
+
+        Notes
+        -----
+            (1) You MUST use the `self.score()` method for board evaluation
+                to pass the project unit tests; you cannot call any other
+                evaluation function directly.
+        """
         assert depth > 0, 'depth must be a positive integer'
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
