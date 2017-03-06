@@ -17,6 +17,17 @@ class Timeout(Exception):
     pass
 
 
+def init_first_list(legal_moves, attack_squares):
+    moves = []
+    for m in legal_moves:
+        if m in attack_squares:
+            point = [-1000.0, m]
+        else:
+            point = [float('-inf'), m]
+        moves.append(point)
+    return moves
+
+
 class Point:
     def __init__(self, p):
         self.x = p[0]
@@ -364,6 +375,7 @@ class CustomPlayer:
         elif len(legal_moves) == 1:
             return legal_moves[0]
 
+        other_moves = game.get_legal_moves(game.inactive_player)
         if game.move_count <= 1:
             if game.move_count == 0:
                 # Move to center of board.
@@ -371,7 +383,6 @@ class CustomPlayer:
             elif game.move_count == 1:
                 # Move to center of board if not taken.
                 center_point = Point(get_center(game))
-                other_moves = game.get_legal_moves(game.inactive_player)
                 return center_point.closest(other_moves)
                 #return random.choice(other_moves)
         value_move = (float('-inf'), (-1, -1))
@@ -393,7 +404,7 @@ class CustomPlayer:
                 else:
                     value_move = self.alphabeta(game, self.search_depth)
             else:
-                moves = [[float('-inf'), m] for m in legal_moves]
+                moves = init_first_list(legal_moves, other_moves)
                 if self.method == 'minimax':
                     for depth in range(1, self.search_depth+1):
                         d = depth-1
