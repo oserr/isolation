@@ -346,11 +346,8 @@ class CustomPlayer:
                 return (game.height // 2, game.width // 2)
             elif game.move_count == 1:
                 # Move to center of board if not taken.
-                square = (game.height // 2, game.width // 2)
-                if square in game.get_blank_spaces():
-                    return square
-                # Opponent has center square, so move to non-symmetric square.
-            #else:
+                other_moves = game.get_legal_moves(game.inactive_player)
+                return random.choice(other_moves)
         value_move = (float('-inf'), (-1, -1))
 
         # TODO: finish this function!
