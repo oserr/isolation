@@ -51,24 +51,6 @@ def get_center(game):
     return (row, col)
 
 
-def winner_or_loser(func):
-    """Wraps a heuristic function taking two paramers.
-
-    :param func
-        A heuristic function with signature float(game, player).
-    :return
-        Function with same signature as func.
-    """
-    @functools.wrap(func)
-    def wrapper(game, player):
-        if game.is_winner(player):
-            return float('inf')
-        if game.is_loser(player):
-            return float('-inf')
-        return func(game, player)
-    return wrapper
-
-
 def avg_distance_to_blank_squares(game, player):
     blank_spaces = game.get_blank_spaces()
     assert blank_spaces, 'cannot divide by zero'
