@@ -498,7 +498,8 @@ class CustomPlayer:
                 value_move = min(value_move, (value, m))
             return value_move
 
-    def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
+    def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"),
+                  maximizing_player=True):
         """Implement minimax search with alpha-beta pruning as described in the
         lectures.
 
