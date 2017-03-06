@@ -57,7 +57,7 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    return get_manhattan_distance(game)
+    return moves_diff(game, player)
 
 
 def moves_diff(game, player):
@@ -334,6 +334,12 @@ class CustomPlayer:
             (-1, -1) if there are no available legal moves.
         """
         self.time_left = time_left
+
+        if not legal_moves:
+            return (-1, -1)
+        elif len(legal_moves) == 1:
+            return legal_moves[0]
+
         if game.move_count <= 1:
             if game.move_count == 0:
                 # Move to center of board.
@@ -345,7 +351,6 @@ class CustomPlayer:
                     return square
                 # Opponent has center square, so move to non-symmetric square.
             #else:
-        search_fn = self.minimax if self.method == 'minimax' else self.alphabeta
         value_move = (float('-inf'), (-1, -1))
 
         # TODO: finish this function!
@@ -360,11 +365,37 @@ class CustomPlayer:
             # automatically catch the exception raised by the search method
             # when the timer gets close to expiring
             if not self.iterative:
-                value_move = search_fn(game, self.search_depth)
+                if self.method == 'minimax':
+                    value_move = self.minimax(game, self.search_depth)
+                else:
+                    value_move = self.alphabeta(game, self.search_depth)
             else:
-                for i in range(1, self.search_depth+1):
-                    other_move = search_fn(game, i)
-                    value_move = max(value_move, other_move)
+                moves = [[float('-inf'), m] for m in legal_moves]
+                if self.method == 'minimax':
+                    for depth in range(1, self.search_depth+1):
+                        d = depth-1
+                        moves = sorted(moves, reverse=True)
+                        for i, (_, m) in enumerate(moves):
+                            child = game.forecast_move(m)
+                            value, _ = self.minimax(child, d, False)
+                            value_move = max(value_move, (value, m))
+                            # Save the new value for this move
+                            moves[i][0] = value
+                else:
+                    b = float('inf')
+                    for depth in range(1, self.search_depth+1):
+                        a = float('-inf')
+                        d = depth-1
+                        moves = sorted(moves, reverse=True)
+                        for i, (_, m) in enumerate(moves):
+                            child = game.forecast_move(m)
+                            value, _ = self.alphabeta(child, d, a, b, False)
+                            value_move = max(value_move, (value, m))
+                            # Save the new value for this move
+                            moves[i][0] = value
+                            a = max(a, value)
+                            if b <= a:
+                                break
         except Timeout:
             # Handle any actions required at timeout, if necessary
             pass
