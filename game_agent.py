@@ -24,43 +24,44 @@ class NodeBoard:
     def __init__(self, game):
         self.row = game.height
         self.col = game.width
-        self.board = copy.deepcopy(game.__board_stat__)
+        self.board = copy.deepcopy(game.__board_state__)
         self.blank = game.BLANK
 
     def siblings(self, node):
-        nodes = [(node[0]+d[0], node[1]+d[1]) for d in NodeBoard.directions]
+        row, col = node
+        nodes = [(row+r, col+c) for r, c in NodeBoard.directions]
         return [n for n in nodes if self.is_valid_node(n)]
 
     def is_valid_node(self, node):
-        return  (0 <= node[0] < self.row) and (0 <= node[1] < self.col)
+        row, col = node
+        return  (0 <= row < self.row) and (0 <= col < self.col)
 
     def is_visited(self, node):
         assert self.is_valid_node(node), 'node is not located inside board'
         row, col = node
-        return self.board[row][col] != self.BLANK
+        return self.board[row][col] != self.blank
 
     def visit_node(self, node):
         row, col = node
-        self.board[row][col] = 0
+        self.board[row][col] = 100
 
     def longest_path(self, node):
         assert self.is_valid_node(node), 'node is not located inside board'
-        board = copy.deepcopy(self.board)
         paths = {}
         for sibling in self.siblings(node):
-            if sibling not self.is_visited(node):
-                self.visit_node(node)
-                paths[node] = 1
-                self.search(node, paths, 2)
+            if not self.is_visited(sibling):
+                self.visit_node(sibling)
+                paths[sibling] = 1
+                self.search(sibling, paths, 2)
         value, _ = max((v, k) for k, v in paths.items())
         return value
 
-    def search(self, node, paths, path_num)
+    def search(self, node, paths, path_num):
         for sibling in self.siblings(node):
-            if sibling not self.is_visited(node):
-                self.visit_node(node)
-                paths[node] = path_num
-                self.search(node, paths, path_num+3)
+            if not self.is_visited(sibling):
+                self.visit_node(sibling)
+                paths[sibling] = path_num
+                self.search(sibling, paths, path_num+1)
 
 
 def init_first_list(legal_moves, attack_squares):
@@ -127,7 +128,17 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    return -avg_distance_to_blank_squares(game, player)
+    if not game.get_legal_moves(player):
+        return float('-inf')
+    if not game.get_legal_moves(game.get_opponent(player)):
+        return float('inf')
+
+    value = moves_diff(game, player)
+    if get_number_of_free_squares(game) <= 18:
+        node = game.get_player_location(player)
+        node_board = NodeBoard(game)
+        value += node_board.longest_path(node)
+    return value
 
 
 def get_board_size(game):
