@@ -10,11 +10,57 @@ import functools
 import math
 import random
 import sys
+import copy
 
 
 class Timeout(Exception):
     """Subclass base exception for code clarity."""
     pass
+
+
+class NodeBoard:
+    directions = [(-2, -1), (-2, 1), (-1, -2), (-1, 2),
+                  (1, -2),  (1, 2), (2, -1),  (2, 1)]
+    def __init__(self, game):
+        self.row = game.height
+        self.col = game.width
+        self.board = copy.deepcopy(game.__board_stat__)
+        self.blank = game.BLANK
+
+    def siblings(self, node):
+        nodes = [(node[0]+d[0], node[1]+d[1]) for d in NodeBoard.directions]
+        return [n for n in nodes if self.is_valid_node(n)]
+
+    def is_valid_node(self, node):
+        return  (0 <= node[0] < self.row) and (0 <= node[1] < self.col)
+
+    def is_visited(self, node):
+        assert self.is_valid_node(node), 'node is not located inside board'
+        row, col = node
+        return self.board[row][col] != self.BLANK
+
+    def visit_node(self, node):
+        row, col = node
+        self.board[row][col] = 0
+
+    def longest_path(self, node):
+        assert self.is_valid_node(node), 'node is not located inside board'
+        board = copy.deepcopy(self.board)
+        paths = {}
+        for sibling in self.siblings(node):
+            if sibling not self.is_visited(node):
+                self.visit_node(node)
+                paths[node] = 1
+                self.search(node, paths, 2)
+        value, _ = max((v, k) for k, v in paths.items())
+        return value
+
+    def search(self, node, paths, path_num)
+        for sibling in self.siblings(node):
+            if sibling not self.is_visited(node):
+                self.visit_node(node)
+                paths[node] = path_num
+                self.search(node, paths, path_num+3)
 
 
 def init_first_list(legal_moves, attack_squares):
