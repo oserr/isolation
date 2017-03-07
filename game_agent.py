@@ -130,6 +130,14 @@ def custom_score(game, player):
     return -avg_distance_to_blank_squares(game, player)
 
 
+def get_board_size(game):
+    return game.height * game.width
+
+
+def get_number_of_free_squares(game):
+    return get_board_size(game) - game.move_count
+
+
 def moves_minus_avg_distance(game, player):
     num_moves = len(game.get_legal_moves(player))
     return num_moves - avg_distance_to_blank_squares(game, player)
