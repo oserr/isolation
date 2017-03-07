@@ -133,11 +133,15 @@ def custom_score(game, player):
     if not game.get_legal_moves(game.get_opponent(player)):
         return float('inf')
 
-    value = moves_diff(game, player)
-    if get_number_of_free_squares(game) <= 18:
+    value = float(0)
+    value += moves_diff(game, player)
+    value -= distance_from_center(game, player)
+    '''
+    if get_number_of_free_squares(game) <= 10:
         node = game.get_player_location(player)
         node_board = NodeBoard(game)
         value += node_board.longest_path(node)
+    '''
     return value
 
 
@@ -226,6 +230,12 @@ def get_player_distance(game):
     p1 = game.get_player_location(game.active_player)
     p2 = game.get_player_location(game.inactive_player)
     return compute_distance(p1, p2)
+
+
+def distance_from_center(game, player):
+    player_node = game.get_player_location(game.active_player)
+    center_node = get_center(game)
+    return compute_distance(player_node, center_node)
 
 
 def compute_distance(point_a, point_b):
@@ -400,7 +410,7 @@ class CustomPlayer:
         timer expires.
     """
 
-    def __init__(self, search_depth=3, score_fn=custom_score,
+    def __init__(self, search_depth=4, score_fn=custom_score,
                  iterative=True, method='minimax', timeout=10.):
         self.search_depth = search_depth if search_depth > 0 else sys.maxsize
         self.iterative = iterative
@@ -498,6 +508,7 @@ class CustomPlayer:
                                 break
         except Timeout:
             # Handle any actions required at timeout, if necessary
+            print('GOT A TIMEOUT')
             pass
 
         # Return the best move from the last completed search iteration
