@@ -39,7 +39,7 @@ class Point:
         return compute_distance(this_point, p)
 
     def closest(self, point_list):
-        """Returns the closes point found closest to this point."""
+        """Returns the point closest to this point."""
         _, point = min((self.distance(p), p) for p in point_list)
         return point
 
