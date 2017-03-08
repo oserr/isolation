@@ -410,7 +410,7 @@ class CustomPlayer:
         timer expires.
     """
 
-    def __init__(self, search_depth=4, score_fn=custom_score,
+    def __init__(self, search_depth=25, score_fn=custom_score,
                  iterative=True, method='minimax', timeout=10.):
         self.search_depth = search_depth if search_depth > 0 else sys.maxsize
         self.iterative = iterative
@@ -508,7 +508,7 @@ class CustomPlayer:
                                 break
         except Timeout:
             # Handle any actions required at timeout, if necessary
-            print('GOT A TIMEOUT')
+            # print('GOT A TIMEOUT')
             pass
 
         # Return the best move from the last completed search iteration
@@ -613,41 +613,41 @@ class CustomPlayer:
                 to pass the project unit tests; you cannot call any other
                 evaluation function directly.
         """
-        assert depth >= 0, 'depth must be nonnegative'
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
         legal_moves = game.get_legal_moves()
+        move = (-1, -1)
         if maximizing_player:
-            player = game.active_player
-            last_move = game.get_player_location(player)
-            value_move = (float('-inf'), last_move)
+            value = float('-inf')
             if not legal_moves:
-                return value_move
+                return (value, move)
             if not depth:
-                return (self.score(game, player), last_move)
+                return (self.score(game, game.active_player), move)
             depth -= 1
             for m in legal_moves:
-                child_board = game.forecast_move(m)
-                value, _ = self.alphabeta(child_board, depth, alpha, beta, False)
-                value_move = max(value_move, (value, m))
-                alpha = max(alpha, value)
+                next_value, _ = self.alphabeta(game.forecast_move(m), depth, alpha, beta, False)
+                if next_value > value:
+                    value = next_value
+                    move = m
+                if value > alpha:
+                    alpha = value
                 if beta <= alpha:
                     break
-            return value_move
+            return value, move
         else:
-            player = game.inactive_player
-            last_move = game.get_player_location(game.inactive_player)
-            value_move = (float('inf'), last_move)
+            value = float('inf')
             if not legal_moves:
-                return value_move
+                return value, move
             if not depth:
-                return (self.score(game, player), last_move)
+                return self.score(game, game.inactive_player), move
             depth -= 1
             for m in legal_moves:
-                child_board = game.forecast_move(m)
-                value, _ = self.alphabeta(child_board, depth, alpha, beta, True)
-                value_move = min(value_move, (value, m))
-                beta = min(beta, value)
+                next_value, _ = self.alphabeta(game.forecast_move(m), depth, alpha, beta, True)
+                if next_value < value:
+                    value = next_value
+                    move = m
+                if value < beta:
+                    beta = value
                 if beta <= alpha:
                     break
-            return value_move
+            return value, move
