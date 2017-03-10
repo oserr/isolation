@@ -410,7 +410,7 @@ class CustomPlayer:
         timer expires.
     """
 
-    def __init__(self, search_depth=40, score_fn=custom_score,
+    def __init__(self, search_depth=30, score_fn=custom_score,
                  iterative=True, method='minimax', timeout=10.):
         self.search_depth = search_depth if search_depth > 0 else sys.maxsize
         self.iterative = iterative
@@ -471,24 +471,26 @@ class CustomPlayer:
                 center_point = Point(get_center(game))
                 return center_point.closest(other_moves)
                 #return random.choice(other_moves)
-        value_move = (float('-inf'), (-1, -1))
+        move = (-1, -1)
+        value = float('-inf')
 
         try:
             if not self.iterative:
                 if self.method == 'minimax':
-                    value_move = self.minimax(game, self.search_depth)
+                    value, move = self.minimax(game, self.search_depth)
                 else:
-                    value_move = self.alphabeta(game, self.search_depth)
+                    value, move = self.alphabeta(game, self.search_depth)
             else:
                 moves = init_first_list(legal_moves, other_moves)
                 if self.method == 'minimax':
                     for depth in range(1, self.search_depth+1):
                         d = depth-1
-                        moves = sorted(moves, reverse=True)
+                        moves = sorted(moves, key=lambda x: x[0], reverse=True)
                         for i, (_, m) in enumerate(moves):
-                            child = game.forecast_move(m)
-                            value, _ = self.minimax(child, d, False)
-                            value_move = max(value_move, (value, m))
+                            next_value, _ = self.minimax(game.forecast_move(m), d, False)
+                            if next_value > value:
+                                value = next_value
+                                move = m
                             # Save the new value for this move
                             moves[i][0] = value
                 else:
@@ -496,14 +498,16 @@ class CustomPlayer:
                     for depth in range(1, self.search_depth+1):
                         a = float('-inf')
                         d = depth-1
-                        moves = sorted(moves, reverse=True)
+                        moves = sorted(moves, key=lambda x: x[0], reverse=True)
                         for i, (_, m) in enumerate(moves):
-                            child = game.forecast_move(m)
-                            value, _ = self.alphabeta(child, d, a, b, False)
-                            value_move = max(value_move, (value, m))
+                            next_value, _ = self.alphabeta(game.forecast_move(m), d, a, b, False)
+                            if next_value > value:
+                                value = next_value
+                                move = m
                             # Save the new value for this move
                             moves[i][0] = value
-                            a = max(a, value)
+                            if value > a:
+                                a = value
                             if b <= a:
                                 break
         except Timeout:
@@ -512,7 +516,7 @@ class CustomPlayer:
             pass
 
         # Return the best move from the last completed search iteration
-        return value_move[1]
+        return move
 
     def minimax(self, game, depth, maximizing_player=True):
         """Implement the minimax search algorithm as described in the lectures.
