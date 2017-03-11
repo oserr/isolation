@@ -145,6 +145,49 @@ def custom_score(game, player):
     return value
 
 
+def distance_from_sparsest_quadrant(game, player):
+    center_row, center_col = get_center(game)
+    blank_spaces = game.get_blank_spaces()
+    top_left = 0
+    top_right = 0
+    bottom_left = 0
+    bottom_right = 0
+    for r,c in blank_spaces:
+        if r > center_row and c < center_col:
+            top_left += 1
+        elif r > center_row and c > center_col:
+            top_right += 1
+        elif r < center_row and c < center_col:
+            bottom_left += 1
+        elif r < center_row and c > center_col:
+            bottom_right += 1
+    max_num_blank = max(top_left, top_right, bottom_left, bottom_right)
+    candidates = []
+    if top_left == max_num_blank:
+        candidates.append(top_left)
+    if top_right == max_num_blank:
+        candidates.append(top_right)
+    if bottom_left == max_num_blank:
+        candidates.append(bottom_left)
+    if bottom_right == max_num_blank:
+        candidates.append(bottom_right)
+    if len(candidates) == 4:
+        return 0
+    if len(candidates) == 1:
+        quadrant = candidates[0]
+    else:
+        quadrant = random.choice(candidates)
+    if quadrant is top_left:
+        quad_center = (center_row // 2, center_col // 2)
+    elif quadrant is top_right:
+        quad_center = (center_row // 2, (center_col+game.width) // 2)
+    elif quadrant is bottom_right:
+        quad_center = ((center_row+game.height) // 2, center_col // 2)
+    else:
+        quad_center = ((center_row+game.height) // 2, (center_col+game.width) // 2)
+    return compute_distance(quad_center, game.get_player_location(player))
+
+
 def get_board_size(game):
     return game.height * game.width
 
@@ -410,7 +453,7 @@ class CustomPlayer:
         timer expires.
     """
 
-    def __init__(self, search_depth=30, score_fn=custom_score,
+    def __init__(self, search_depth=35, score_fn=custom_score,
                  iterative=True, method='minimax', timeout=10.):
         self.search_depth = search_depth if search_depth > 0 else sys.maxsize
         self.iterative = iterative
