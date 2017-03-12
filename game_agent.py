@@ -135,18 +135,7 @@ def custom_score(game, player):
 
     value = float(0)
     value += moves_diff(game, player)
-    '''
-    if game.move_count > 20:
-        value -= distance_from_sparsest_quadrant(game, player)
-    '''
-    if game.move_count < 16:
-        value -= distance_from_center(game, player)
-    '''
-    if get_number_of_free_squares(game) <= 10:
-        node = game.get_player_location(player)
-        node_board = NodeBoard(game)
-        value += node_board.longest_path(node)
-    '''
+    value -= distance_from_center(game, player)
     return value
 
 
