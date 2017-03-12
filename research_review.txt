@@ -1,0 +1,7 @@
+AI techniques have allowed computers to surpass human performance in adversarial
+games of perfect information, but minimax with alphabeta pruning and Monte Carlo
+tree search have been unable to tame the complexity of the game of Go. In
+Mastering the game of Go with deep neural networks and tree search, the authors
+present a new technique that combines Monte Carlo simulation with value networks
+to evaluate positions and policy networks to select moves to defeat professional
+human Go players.
