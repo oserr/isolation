@@ -128,15 +128,29 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
+    '''
     if not game.get_legal_moves(player):
         return float('-inf')
     if not game.get_legal_moves(game.get_opponent(player)):
         return float('inf')
-
+    '''
     value = float(0)
     value += moves_diff(game, player)
     value -= distance_from_center(game, player)
     return value
+
+
+def get_number_of_blank_adjacent_squares(game, player):
+    blank_squares = game.get_blank_spaces()
+    row, col = game.get_player_location(player)
+    neighbors = [(row+r, col+c) for r,c in
+                 ((1,0), (1,1), (0,1), (-1,1),
+                 (-1,0), (-1,-1), (0,-1), (1,-1))]
+    total = 0
+    for n in neighbors:
+        if n in blank_squares:
+            total += 1
+    return total
 
 
 def get_board_size(game):
