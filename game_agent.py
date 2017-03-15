@@ -128,12 +128,10 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    '''
-    if not game.get_legal_moves(player):
-        return float('-inf')
-    if not game.get_legal_moves(game.get_opponent(player)):
-        return float('inf')
-    '''
+    return custom_score_1(game, player)
+
+
+def custom_score_1(game, player):
     value = float(0)
     value += moves_diff(game, player)
     value -= distance_from_center(game, player)
