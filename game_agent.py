@@ -144,7 +144,8 @@ def custom_score_2(game, player):
 
 def custom_score_3(game, player):
     value = custom_score_1(game, player)
-    value += get_blank_square_density_difference(game, player, 2)
+    weight = more_important_at_end(game)
+    value += weight * get_blank_square_density_difference(game, player, 2)
     return value
 
 
@@ -156,9 +157,14 @@ def custom_score_4(game, player):
     return value
 
 
-def more_important_at_beginning(game)
+def more_important_at_beginning(game):
     board_size = get_board_size(game)
     return (board_size-game.move_count) / board_size
+
+
+def more_important_at_end(game):
+    board_size = get_board_size(game)
+    return game.move_count / board_size
 
 
 def get_adjacent_squares(game, player, level):
