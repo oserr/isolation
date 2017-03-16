@@ -162,6 +162,16 @@ def get_number_of_blank_adjacent_squares(game, player, blank_squares, level):
     return total
 
 
+def get_blank_square_density_difference(game, player, level):
+    blank_squares = game.get_blank_squares()
+    bs_player1 = get_number_of_blank_adjacent_squares(game, player,
+                                                      blank_squares, level)
+    bs_player2 = get_number_of_blank_adjacent_squares(game,
+                                                      game.get_opponent(player),
+                                                      blank_squares, level)
+    return float(len(bs_player1) - len(bs_player2))
+
+
 def get_board_size(game):
     return game.height * game.width
 
