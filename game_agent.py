@@ -128,7 +128,7 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    return custom_score_1(game, player) - get_player_distance(game)
+    return custom_score_3(game, player)
 
 
 def custom_score_1(game, player):
@@ -164,13 +164,13 @@ def get_number_of_blank_adjacent_squares(game, player, blank_squares, level):
 
 
 def get_blank_square_density_difference(game, player, level):
-    blank_squares = game.get_blank_squares()
-    bs_player1 = get_number_of_blank_adjacent_squares(game, player,
+    blank_squares = game.get_blank_spaces()
+    num_p1 = get_number_of_blank_adjacent_squares(game, player,
                                                       blank_squares, level)
-    bs_player2 = get_number_of_blank_adjacent_squares(game,
+    num_p2 = get_number_of_blank_adjacent_squares(game,
                                                       game.get_opponent(player),
                                                       blank_squares, level)
-    return float(len(bs_player1) - len(bs_player2))
+    return float(num_p1 - num_p2)
 
 
 def get_board_size(game):
