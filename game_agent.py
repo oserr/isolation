@@ -144,7 +144,8 @@ def custom_score_2(game, player):
 
 def custom_score_3(game, player):
     value = custom_score_1(game, player)
-    return moves_minus_distance(game, player)
+    value += get_blank_square_density_difference(game, player, 3)
+    return value
 
 
 def get_adjacent_squares(game, player, level):
