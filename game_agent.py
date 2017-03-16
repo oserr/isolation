@@ -128,7 +128,7 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    return custom_score_1(game, player)
+    return moves_minus_distance(game, player)
 
 
 def custom_score_1(game, player):
@@ -136,6 +136,10 @@ def custom_score_1(game, player):
     value += moves_diff(game, player)
     value -= distance_from_center(game, player)
     return value
+
+
+def custom_score_2(game, player):
+    return moves_minus_distance(game, player)
 
 
 def get_number_of_blank_adjacent_squares(game, player):
