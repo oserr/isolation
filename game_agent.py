@@ -177,10 +177,10 @@ def get_number_of_blank_adjacent_squares(game, player, blank_squares, level):
 def get_blank_square_density_difference(game, player, level):
     blank_squares = game.get_blank_spaces()
     num_p1 = get_number_of_blank_adjacent_squares(game, player,
-                                                      blank_squares, level)
+                                                  blank_squares, level)
     num_p2 = get_number_of_blank_adjacent_squares(game,
-                                                      game.get_opponent(player),
-                                                      blank_squares, level)
+                                                  game.get_opponent(player),
+                                                  blank_squares, level)
     return float(num_p1 - num_p2)
 
 
