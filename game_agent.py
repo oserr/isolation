@@ -18,17 +18,6 @@ class Timeout(Exception):
     pass
 
 
-def init_first_list(legal_moves, attack_squares):
-    moves = []
-    for m in legal_moves:
-        if m in attack_squares:
-            point = [-1000.0, m]
-        else:
-            point = [float('-inf'), m]
-        moves.append(point)
-    return moves
-
-
 class Point:
     def __init__(self, p):
         self.x = p[0]
@@ -539,7 +528,6 @@ class CustomPlayer:
                 else:
                     value, move = self.alphabeta(game, self.search_depth)
             else:
-                #moves = init_first_list(legal_moves, other_moves)
                 moves = [[float('-inf'), m] for m in legal_moves]
                 if self.method == 'minimax':
                     for depth in range(1, self.search_depth+1):
