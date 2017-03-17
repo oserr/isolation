@@ -167,6 +167,44 @@ def custom_score_5(game, player):
     return value
 
 
+def custom_score_6(game, player):
+    wb = more_important_at_beginning(game)
+    we = more_important_at_end(game)
+    value = float(0)
+    value += moves_diff(game, player)
+    value -= wb * distance_from_center(game, player)
+    value += we * get_blank_square_density_difference(game, player, 2)
+    value += attack_move_point(game, player)
+    return value
+
+
+def custom_score_7(game, player):
+    value = float(0)
+    value += moves_diff(game, player)
+    weight = more_important_at_beginning(game)
+    value -= weight * distance_from_center(game, player)
+    value += attack_move_point(game, player)
+    return value
+
+
+MOVE_DIRECTIONS = [(-2, -1), (-2, 1), (-1, -2), (-1, 2),
+                   (1, -2),  (1, 2), (2, -1),  (2, 1)]
+def attack_move_point(game, player):
+    row, col = game.get_player_location(player)
+    location_opponent = game.get_player_location(game.get_opponent(player))
+    is_attack = False
+    for r, c in MOVE_DIRECTIONS:
+        if (row+r, col+c) == location_opponent:
+            is_attack = True
+            break
+    if not is_attack:
+        return 0
+    if player == game.active_player:
+        return -1
+    else:
+        return 1
+
+
 def more_important_at_beginning(game):
     board_size = get_board_size(game)
     return (board_size-game.move_count) / board_size
