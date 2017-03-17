@@ -19,6 +19,8 @@ class Timeout(Exception):
 
 
 class Point:
+    """Represents a point in the (x, y) plane."""
+
     def __init__(self, p):
         self.x = p[0]
         self.y = p[1]
@@ -85,6 +87,12 @@ def custom_score_3(game, player):
 
 
 def custom_score_4(game, player):
+    """Computes the value of a given position according to the following
+    factors:
+        - Difference between number of legal moves for each player.
+        - Distance from the center, with lower distances scored more favorably
+          toward the beginning of the game.
+    """
     value = float(0)
     value += moves_diff(game, player)
     weight = more_important_at_beginning(game)
@@ -133,7 +141,20 @@ def custom_score_8(game, player):
 
 MOVE_DIRECTIONS = [(-2, -1), (-2, 1), (-1, -2), (-1, 2),
                    (1, -2),  (1, 2), (2, -1),  (2, 1)]
+
+
 def attack_move_point(game, player):
+    """Computes the value of a position accoring to whether a given position
+    represents an attack.
+
+    A position is considered an attack if the non-active player is occupying
+    a space to which the active player would have been able to move had it
+    not been occupied.
+
+    :returns
+        -1 if active player is being attacked, 0 for no attacks, and 1
+        otherwise.
+    """
     row, col = game.get_player_location(player)
     location_opponent = game.get_player_location(game.get_opponent(player))
     is_attack = False
@@ -150,22 +171,38 @@ def attack_move_point(game, player):
 
 
 def more_important_at_beginning(game):
+    """Returns a decimal value between (0, 1), with the value decreasing with
+    the progression of the game.
+    """
     board_size = get_board_size(game)
     return (board_size-game.move_count) / board_size
 
 
 def more_important_at_end(game):
+    """Returns a decimal value between (0, 1), with the value increasing with
+    the progression of the game.
+    """
     board_size = get_board_size(game)
     return game.move_count / board_size
 
 
 def get_adjacent_squares(game, player, level):
+    """Returns the squares adjacent to a player's location. Note the squares
+    may not be in the board, and thus it is the caller's responsibility to
+    verify each square is valid.
+
+    :param level
+        The number of squares away from a player's location used to obtain the
+        adjcent squares. 1 would indicate only adjacent squares one row and
+        column away from the player's square.
+    """
     row, col = game.get_player_location(player)
     return [(row+r, col+c) for r in range(-level, level+1)
                            for c in range(-level, level+1)]
 
 
 def get_number_of_blank_adjacent_squares(game, player, blank_squares, level):
+    """Computes the number of blank squares adjacent to a player's location."""
     adjacent_squares = get_adjacent_squares(game, player, level)
     total = 0
     for s in adjacent_squares:
@@ -175,6 +212,9 @@ def get_number_of_blank_adjacent_squares(game, player, blank_squares, level):
 
 
 def get_blank_square_density_difference(game, player, level):
+    """Computes the difference between the number of blank squares adjacent to
+    each player.
+    """
     blank_squares = game.get_blank_spaces()
     num_p1 = get_number_of_blank_adjacent_squares(game, player,
                                                   blank_squares, level)
@@ -185,6 +225,9 @@ def get_blank_square_density_difference(game, player, level):
 
 
 def get_board_size(game):
+    """Returns the size of the board, equal to the number of spaces in the
+    board.
+    """
     return game.height * game.width
 
 
@@ -235,6 +278,7 @@ def get_player_distance(game):
 
 
 def distance_from_center(game, player):
+    """Computes the distance from the center for a given player's location."""
     player_node = game.get_player_location(game.active_player)
     center_node = get_center(game)
     return compute_distance(player_node, center_node)
