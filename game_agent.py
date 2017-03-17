@@ -41,14 +41,6 @@ def get_center(game):
     return (row, col)
 
 
-def avg_distance_to_blank_squares(game, player):
-    blank_spaces = game.get_blank_spaces()
-    assert blank_spaces, 'cannot divide by zero'
-    location = game.get_player_location(player)
-    total_distance = sum(compute_distance(location, s) for s in blank_spaces)
-    return total_distance / len(blank_spaces)
-
-
 def custom_score(game, player):
     """Calculate the heuristic value of a game state from the point of view
     of the given player.
