@@ -188,10 +188,6 @@ def get_board_size(game):
     return game.height * game.width
 
 
-def get_number_of_free_squares(game):
-    return get_board_size(game) - game.move_count
-
-
 def moves_diff(game, player):
     """Calculate the heuristic value of a game state from the point of view
     of the given player by subtracting the number of moves available to the
