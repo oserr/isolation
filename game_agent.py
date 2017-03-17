@@ -187,6 +187,15 @@ def custom_score_7(game, player):
     return value
 
 
+def custom_score_8(game, player):
+    value = float(0)
+    value += moves_diff(game, player)
+    weight = more_important_at_beginning(game)
+    value -= weight * distance_from_center(game, player)
+    value += weight * attack_move_point(game, player)
+    return value
+
+
 MOVE_DIRECTIONS = [(-2, -1), (-2, 1), (-1, -2), (-1, 2),
                    (1, -2),  (1, 2), (2, -1),  (2, 1)]
 def attack_move_point(game, player):
