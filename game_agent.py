@@ -18,52 +18,6 @@ class Timeout(Exception):
     pass
 
 
-class NodeBoard:
-    directions = [(-2, -1), (-2, 1), (-1, -2), (-1, 2),
-                  (1, -2),  (1, 2), (2, -1),  (2, 1)]
-    def __init__(self, game):
-        self.row = game.height
-        self.col = game.width
-        self.board = copy.deepcopy(game.__board_state__)
-        self.blank = game.BLANK
-
-    def siblings(self, node):
-        row, col = node
-        nodes = [(row+r, col+c) for r, c in NodeBoard.directions]
-        return [n for n in nodes if self.is_valid_node(n)]
-
-    def is_valid_node(self, node):
-        row, col = node
-        return  (0 <= row < self.row) and (0 <= col < self.col)
-
-    def is_visited(self, node):
-        assert self.is_valid_node(node), 'node is not located inside board'
-        row, col = node
-        return self.board[row][col] != self.blank
-
-    def visit_node(self, node):
-        row, col = node
-        self.board[row][col] = 100
-
-    def longest_path(self, node):
-        assert self.is_valid_node(node), 'node is not located inside board'
-        paths = {}
-        for sibling in self.siblings(node):
-            if not self.is_visited(sibling):
-                self.visit_node(sibling)
-                paths[sibling] = 1
-                self.search(sibling, paths, 2)
-        value, _ = max((v, k) for k, v in paths.items())
-        return value
-
-    def search(self, node, paths, path_num):
-        for sibling in self.siblings(node):
-            if not self.is_visited(sibling):
-                self.visit_node(sibling)
-                paths[sibling] = path_num
-                self.search(sibling, paths, path_num+1)
-
-
 def init_first_list(legal_moves, attack_squares):
     moves = []
     for m in legal_moves:
@@ -585,7 +539,8 @@ class CustomPlayer:
                 else:
                     value, move = self.alphabeta(game, self.search_depth)
             else:
-                moves = init_first_list(legal_moves, other_moves)
+                #moves = init_first_list(legal_moves, other_moves)
+                moves = [[float('-inf'), m] for m in legal_moves]
                 if self.method == 'minimax':
                     for depth in range(1, self.search_depth+1):
                         d = depth-1
