@@ -200,23 +200,6 @@ def get_number_of_free_squares(game):
     return get_board_size(game) - game.move_count
 
 
-def moves_minus_avg_distance(game, player):
-    num_moves = len(game.get_legal_moves(player))
-    return num_moves - avg_distance_to_blank_squares(game, player)
-
-
-def avg_distance_for_opponent(game, player):
-    opponent = game.get_opponent(player)
-    return avg_distance_to_blank_squares(game, opponent)
-
-
-def avg_distance_over_avg_distance(game, player):
-    small_avg_good = avg_distance_to_blank_squares(game, player)
-    opponent = game.get_opponent(player)
-    high_avg_good = avg_distance_to_blank_squares(game, opponent)
-    return small_avg_good / high_avg_good
-
-
 def moves_diff(game, player):
     """Calculate the heuristic value of a game state from the point of view
     of the given player by subtracting the number of moves available to the
