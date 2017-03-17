@@ -410,8 +410,6 @@ class CustomPlayer:
                             if b <= a:
                                 break
         except Timeout:
-            # Handle any actions required at timeout, if necessary
-            # print('GOT A TIMEOUT')
             pass
 
         # Return the best move from the last completed search iteration
