@@ -223,22 +223,6 @@ def moves_minus_distance(game, player):
     return moves_diff(game, player) - get_player_distance(game)
 
 
-def moves_minus_manhattan_distance(game, player):
-    """Calculate the heuristic value of a game state from the point of view
-    of the given player.
-
-    :param game
-        An instance of `isolation.Board` encoding the current state of the
-        game (e.g., player locations and blocked cells).
-    :param player
-        A player instance in the current game (i.e., an object corresponding to
-        one of the player objects `game.__player_1__` or `game.__player_2__`.)
-    :return
-        The heuristic value of the current game state to the specified player.
-    """
-    return moves_diff(game, player) - get_manhattan_distance(game)
-
-
 def get_player_distance(game):
     """Computes the euclidean distance between the two players on the board.
 
