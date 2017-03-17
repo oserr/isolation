@@ -247,30 +247,6 @@ def compute_distance(point_a, point_b):
     return math.sqrt(x_part + y_part)
 
 
-def compute_location_value(game, player):
-    """Computes the value of the player's location, with higher values for
-    locations that are closer to the center.
-
-    :param game
-        The current game board.
-    :param player
-        The player whose location is being evaluated.
-    :return
-        The value of the location as a float.
-    """
-    # Don't evaluate for boards that are particularly small.
-    if game.height < 4 or game.width < 4:
-        return 0
-    cutoff_point = CutoffPoint(game)
-    location = game.get_player_location(player)
-    if cutoff_point.is_center(location):
-        return .75
-    elif cutoff_point.is_inner_edge(location):
-        return .50
-    else:
-        return .25
-
-
 class CutoffPoint:
     """A utility class that computes two cutoff points where the board is
     roughly split into outer edge, inner edge, and center.
