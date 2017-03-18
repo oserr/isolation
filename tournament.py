@@ -25,6 +25,7 @@ import random
 import warnings
 
 from collections import namedtuple
+from matplotlib import pyplot as plt
 
 from isolation import Board
 from sample_players import RandomPlayer
@@ -106,13 +107,16 @@ def play_match(player1, player2):
     return num_wins[player1], num_wins[player2]
 
 
-def play_round(agents, num_matches):
+def play_round(agents, args):
     """
     Play one round (i.e., a single match between each pair of opponents)
     """
     agent_1 = agents[-1]
     wins = 0.
     total = 0.
+    p1_scores = []
+    p2_scores = []
+    p2_names = []
 
     print("\nPlaying Matches:")
     print("----------")
@@ -121,11 +125,12 @@ def play_round(agents, num_matches):
 
         counts = {agent_1.player: 0., agent_2.player: 0.}
         names = [agent_1.name, agent_2.name]
+        p2_names.append(agent_2.name)
         print("  Match {}: {!s:^11} vs {!s:^11}".format(idx + 1, *names), end=' ')
 
         # Each player takes a turn going first
         for p1, p2 in itertools.permutations((agent_1.player, agent_2.player)):
-            for _ in range(num_matches):
+            for _ in range(args.nummatch * NUM_MATCHES):
                 score_1, score_2 = play_match(p1, p2)
                 counts[p1] += score_1
                 counts[p2] += score_2
@@ -133,13 +138,28 @@ def play_round(agents, num_matches):
 
         wins += counts[agent_1.player]
 
+        p1_scores.append(counts[agent_1.player])
+        p2_scores.append(counts[agent_2.player])
         print("\tResult: {} to {}".format(int(counts[agent_1.player]),
                                           int(counts[agent_2.player])))
+
+    if args.barchart:
+        creat_barchart(agent_1.name, p1_scores, p2_names, p2_scores)
 
     return 100. * wins / total
 
 
-def main():
+def create_barchart(p1_name, p1_scores, p2_names, p2_scores):
+    xs = [i+.1 for i, _ in enumerate(p2_names)]
+    losses = plt.bar(xs, p2_scores)
+    victories = plt.bar(xs, p1_scores, bottom=p2_scores)
+    plt.ylabel('Victories')
+    plt.title('Performance for heuristic {}'.format(p1_name))
+    plt.xticks(xs, p2_names)
+    plt.legend((victories, losses), ('Victories', 'Losses'))
+    plt.figure().savefig('{}.png'.format(p1_name), bbox_inches='tight')
+
+def main(args):
 
     HEURISTICS = [("Null", null_score),
                   ("Open", open_move_score),
@@ -164,16 +184,18 @@ def main():
     # systems; i.e., the performance of the student agent is considered
     # relative to the performance of the ID_Improved agent to account for
     # faster or slower computers.
-    '''
-    test_agents = [Agent(CustomPlayer(score_fn=improved_score, **CUSTOM_ARGS), "ID_Improved"),
-                   Agent(CustomPlayer(score_fn=custom_score, **CUSTOM_ARGS), "Student")]
-    '''
-    test_agents = [
-        Agent(CustomPlayer(score_fn=heuristic_1, **CUSTOM_ARGS), "custom_score_1"),
-        Agent(CustomPlayer(score_fn=heuristic_2, **CUSTOM_ARGS), "custom_score_2"),
-        Agent(CustomPlayer(score_fn=heuristic_3, **CUSTOM_ARGS), "custom_score_3"),
-        Agent(CustomPlayer(score_fn=improved_score, **CUSTOM_ARGS), "ID_Improved")
-    ]
+    if not args.test:
+        test_agents = [
+            Agent(CustomPlayer(score_fn=improved_score, **CUSTOM_ARGS), "ID_Improved"),
+            Agent(CustomPlayer(score_fn=custom_score, **CUSTOM_ARGS), "Student")
+        ]
+    else:
+        test_agents = [
+            Agent(CustomPlayer(score_fn=heuristic_1, **CUSTOM_ARGS), "custom_score_1"),
+            Agent(CustomPlayer(score_fn=heuristic_2, **CUSTOM_ARGS), "custom_score_2"),
+            Agent(CustomPlayer(score_fn=heuristic_3, **CUSTOM_ARGS), "custom_score_3"),
+            Agent(CustomPlayer(score_fn=improved_score, **CUSTOM_ARGS), "ID_Improved")
+        ]
 
     print(DESCRIPTION)
     for agentUT in test_agents:
@@ -183,7 +205,7 @@ def main():
         print("*************************")
 
         agents = random_agents + mm_agents + ab_agents + [agentUT]
-        win_ratio = play_round(agents, NUM_MATCHES)
+        win_ratio = play_round(agents, args)
 
         print("\n\nResults:")
         print("----------")
@@ -197,7 +219,7 @@ if __name__ == "__main__":
         help='Plays matches with the heuristic functions instead of Student')
     parser.add_argument('-b', '--barchart', action='store_true',
         help='Create a bar chart for each round of play')
-    parser.add_argument('-n', '--nummatch', type=int, default=5,
+    parser.add_argument('-n', '--nummatch', type=int, default=1,
         help='The number of matches to play against each opponent (times 5)')
     args = parser.parse_args()
     main()
