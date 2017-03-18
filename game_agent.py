@@ -6,11 +6,9 @@ augment the test suite with your own test cases to further test your code.
 You must test your agent's strength against a set of agents with known
 relative strength using tournament.py and include the results in your report.
 """
-import functools
 import math
 import random
 import sys
-import copy
 
 
 class Timeout(Exception):
@@ -65,28 +63,10 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    return custom_score_4(game, player)
+    return heuristic_1(game, player)
 
 
-def custom_score_1(game, player):
-    value = float(0)
-    value += moves_diff(game, player)
-    value -= distance_from_center(game, player)
-    return value
-
-
-def custom_score_2(game, player):
-    return moves_minus_distance(game, player)
-
-
-def custom_score_3(game, player):
-    value = custom_score_1(game, player)
-    weight = more_important_at_end(game)
-    value += weight * get_blank_square_density_difference(game, player, 2)
-    return value
-
-
-def custom_score_4(game, player):
+def heuristic_1(game, player):
     """Computes the value of a given position according to the following
     factors:
         - Difference between number of legal moves for each player.
@@ -100,42 +80,29 @@ def custom_score_4(game, player):
     return value
 
 
-def custom_score_5(game, player):
-    wb = more_important_at_beginning(game)
-    we = more_important_at_end(game)
+def heuristic_2(game, player):
+    """Computes the value of a given position according to the following
+    factors:
+        - Difference between number of legal moves for each player.
+        - Distance from the center, with lower distances scored more favorably.
+    """
     value = float(0)
     value += moves_diff(game, player)
-    value -= wb * distance_from_center(game, player)
-    value += we * get_blank_square_density_difference(game, player, 2)
+    value -= distance_from_center(game, player)
     return value
 
 
-def custom_score_6(game, player):
-    wb = more_important_at_beginning(game)
-    we = more_important_at_end(game)
-    value = float(0)
-    value += moves_diff(game, player)
-    value -= wb * distance_from_center(game, player)
-    value += we * get_blank_square_density_difference(game, player, 2)
-    value += attack_move_point(game, player)
-    return value
-
-
-def custom_score_7(game, player):
-    value = float(0)
-    value += moves_diff(game, player)
-    weight = more_important_at_beginning(game)
-    value -= weight * distance_from_center(game, player)
-    value += attack_move_point(game, player)
-    return value
-
-
-def custom_score_8(game, player):
-    value = float(0)
-    value += moves_diff(game, player)
-    weight = more_important_at_beginning(game)
-    value -= weight * distance_from_center(game, player)
-    value += weight * attack_move_point(game, player)
+def heuristic_3(game, player):
+    """Computes the value of a given position according to the following
+    factors:
+        - Difference between number of legal moves for each player.
+        - Distance from the center, with lower distances scored more favorably.
+        - Difference between number of free squares around players, with
+          density values becoming more important toward the end of the game.
+    """
+    value = custom_score_2(game, player)
+    weight = more_important_at_end(game)
+    value += weight * get_blank_square_density_difference(game, player, 2)
     return value
 
 
@@ -250,33 +217,6 @@ def moves_diff(game, player):
     return float(my_moves - enemy_moves)
 
 
-def moves_minus_distance(game, player):
-    """Calculate the heuristic value of a game state from the point of view
-    of the given player.
-
-    :param game
-        An instance of `isolation.Board` encoding the current state of the
-        game (e.g., player locations and blocked cells).
-    :param player
-        A player instance in the current game (i.e., an object corresponding to
-        one of the player objects `game.__player_1__` or `game.__player_2__`.)
-    :return
-        The heuristic value of the current game state to the specified player.
-    """
-    return moves_diff(game, player) - get_player_distance(game)
-
-
-def get_player_distance(game):
-    """Computes the euclidean distance between the two players on the board.
-
-    :param game
-        The current game board.
-    """
-    p1 = game.get_player_location(game.active_player)
-    p2 = game.get_player_location(game.inactive_player)
-    return compute_distance(p1, p2)
-
-
 def distance_from_center(game, player):
     """Computes the distance from the center for a given player's location."""
     player_node = game.get_player_location(game.active_player)
@@ -352,7 +292,7 @@ class CustomPlayer:
         timer expires.
     """
 
-    def __init__(self, search_depth=20, score_fn=custom_score,
+    def __init__(self, search_depth=55, score_fn=custom_score,
                  iterative=True, method='minimax', timeout=10.):
         self.search_depth = search_depth if search_depth > 0 else sys.maxsize
         self.iterative = iterative
