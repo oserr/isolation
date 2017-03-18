@@ -19,6 +19,7 @@ initiative in the second match with agentB at (5, 2) as player 1 and agentA at
 (1, 3) as player 2.
 """
 
+import argparse
 import itertools
 import random
 import warnings
@@ -190,4 +191,13 @@ def main():
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Isolation Tournament',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('-t', '--test', action='store_true',
+        help='Plays matches with the heuristic functions instead of Student')
+    parser.add_argument('-b', '--barchart', action='store_true',
+        help='Create a bar chart for each round of play')
+    parser.add_argument('-n', '--nummatch', type=int, default=5,
+        help='The number of matches to play against each opponent (times 5)')
+    args = parser.parse_args()
     main()
