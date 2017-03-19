@@ -152,11 +152,14 @@ def play_round(agents, args):
 def create_barchart(p1_name, p1_scores, p2_names, p2_scores):
     xs = [i+.1 for i, _ in enumerate(p2_names)]
     losses = plt.bar(xs, p2_scores)
-    victories = plt.bar(xs, p1_scores, bottom=p2_scores)
-    plt.ylabel('Victories')
-    plt.title('Performance for heuristic {}'.format(p1_name))
-    plt.xticks(xs, p2_names)
-    plt.legend((victories, losses), ('Victories', 'Losses'))
+    wins = plt.bar(xs, p1_scores, bottom=p2_scores)
+    plt.ylabel('Matches')
+    num_wins = sum(p1_scores)
+    num_losses = sum(p2_scores)
+    win_rate = 100. * num_wins / (num_wins+num_losses)
+    plt.title('{}: {:.2f}% win rate'.format(p1_name, win_rate))
+    plt.xticks(xs, p2_names, rotation=45)
+    plt.legend((wins, losses), ('Wins', 'Losses'))
     plt.savefig('{}.png'.format(p1_name), bbox_inches='tight')
 
 
