@@ -100,7 +100,7 @@ def heuristic_3(game, player):
         - Difference between number of free squares around players, with
           density values becoming more important toward the end of the game.
     """
-    value = custom_score_2(game, player)
+    value = heuristic_2(game, player)
     weight = more_important_at_end(game)
     value += weight * get_blank_square_density_difference(game, player, 2)
     return value

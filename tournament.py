@@ -38,7 +38,7 @@ from game_agent import heuristic_1
 from game_agent import heuristic_2
 from game_agent import heuristic_3
 
-NUM_MATCHES = 25  # number of matches against each opponent
+NUM_MATCHES = 5  # number of matches against each opponent
 TIME_LIMIT = 150  # number of milliseconds before timeout
 
 TIMEOUT_WARNING = "One or more agents lost a match this round due to " + \
@@ -144,7 +144,7 @@ def play_round(agents, args):
                                           int(counts[agent_2.player])))
 
     if args.barchart:
-        creat_barchart(agent_1.name, p1_scores, p2_names, p2_scores)
+        create_barchart(agent_1.name, p1_scores, p2_names, p2_scores)
 
     return 100. * wins / total
 
@@ -157,7 +157,8 @@ def create_barchart(p1_name, p1_scores, p2_names, p2_scores):
     plt.title('Performance for heuristic {}'.format(p1_name))
     plt.xticks(xs, p2_names)
     plt.legend((victories, losses), ('Victories', 'Losses'))
-    plt.figure().savefig('{}.png'.format(p1_name), bbox_inches='tight')
+    plt.savefig('{}.png'.format(p1_name), bbox_inches='tight')
+
 
 def main(args):
 
@@ -191,9 +192,9 @@ def main(args):
         ]
     else:
         test_agents = [
-            Agent(CustomPlayer(score_fn=heuristic_1, **CUSTOM_ARGS), "custom_score_1"),
-            Agent(CustomPlayer(score_fn=heuristic_2, **CUSTOM_ARGS), "custom_score_2"),
-            Agent(CustomPlayer(score_fn=heuristic_3, **CUSTOM_ARGS), "custom_score_3"),
+            Agent(CustomPlayer(score_fn=heuristic_1, **CUSTOM_ARGS), "heuristic_1"),
+            Agent(CustomPlayer(score_fn=heuristic_2, **CUSTOM_ARGS), "heuristic_2"),
+            Agent(CustomPlayer(score_fn=heuristic_3, **CUSTOM_ARGS), "heuristic_3"),
             Agent(CustomPlayer(score_fn=improved_score, **CUSTOM_ARGS), "ID_Improved")
         ]
 
@@ -222,4 +223,4 @@ if __name__ == "__main__":
     parser.add_argument('-n', '--nummatch', type=int, default=1,
         help='The number of matches to play against each opponent (times 5)')
     args = parser.parse_args()
-    main()
+    main(args)
