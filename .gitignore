@@ -3,3 +3,14 @@
 
 # Ignore compiled python files
 *.pyc
+
+# Ignore visualizations created by matplotlib
+*.png
+
+# Ignore zip files created to submit project.
+*.zip
+
+# Ignore files created by latex to produce PDF files.
+*.aux
+*.log
+*.pdf
