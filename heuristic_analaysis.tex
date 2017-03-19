@@ -1,0 +1,92 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage{geometry}
+\geometry{top=1in}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\title{Analysis of heuristic functions for game of Isolation}
+\author{Omar A. Serrano}
+
+\begin{document}
+
+\maketitle
+
+\begin{figure}
+\centering
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{ID_Improved.png}
+    \caption{ID\_Improved}
+    \label{fig:sub2}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{heuristic_1.png}
+    \caption{heuristic\_1}
+    \label{fig:sub1}
+  \end{subfigure}
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{heuristic_2.png}
+    \caption{heuristic\_2}
+    \label{fig:sub3}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{heuristic_3.png}
+    \caption{heuristic\_3}
+    \label{fig:sub4}
+  \end{subfigure}
+\label{fig:test}
+\caption{Performance of heuristic functions vs. ID\_Improved}
+\end{figure}
+
+The three heuristic functions defined in \textit{game\_agent.py} are very
+similar, because they use the same factors to evaluate the board. All three of
+them compute the difference between the number of legal moves for each player,
+which is essentially the evaluation function used by \textit{ID\_Improved}.
+Additionally, all heuristic functions penalize locations that are farther away
+from the center of the board. These two factors alone define the full set of
+factors evaluated by \textit{heuristic\_1} and \textit{heuristic\_2}, whereas
+\textit{heuristic\_3} also computes the difference between the number of
+blank spaces within two spaces away of a player's location on the board.
+
+All three heuristic functions evaluate the difference between the number of
+legal moves for each player equivalently, but not all use the same approach to
+score the distance from the center of the board. \textit{heuristic\_1}
+multiplies the distance to the center by a weight that decreases as the game
+progresses. The importance of being close to the center of the board is that
+it may be easier to jump to different areas of the board. Thus,
+\textit{heuristic\_1} and \textit{heuristic\_2} use this, but
+\textit{heuristic\_1} makes it less important toward the end of the game, the
+idea being there are less empty spaces by then, at which point it may be
+advantageous to hover around the edges of the grid.
+
+\textit{heuristic\_3} is the same as \textit{heuristic\_2}, except that it
+adds the value of the difference between free spaces that are within two spaces
+away from a player's location, multiplied by a weight that increases as the game
+progresses, making the factor more important toward the end of the game. The
+idea is that a player should prefer a move that leads to locations with a higher
+density of free spaces, which point it may be advantageous to hover around the
+edges of the grid, which would become more important toward the end of the game
+because free spaces becomes a more limited resource.
+
+As Figure 1 illustrates, all three heuristics outperformed
+\textit{ID\_Improved} in a tournament of 1000 matches, but \textit{heuristic\_1}
+is the only one that managed a substantial iprovement. For
+\textit{heuristic\_3}, it seems like looking at the density of free spaces
+around a player hurts the performance. This is not very intuitive, because it
+seems reasonable to assume a higher number of free spaces would be correlated
+with a player's ability to move, but perhaps it is due to the fact that agents
+move like chess knights, for whom open positions are less important.
+Clearly, giving less importance to being close to the center of the board as
+the game progresses makes a significant difference, because this is the only
+aspect that differentiates \textit{heuristic\_1} from \textit{heuristic\_2},
+but it improves the winning rate by 3\%.
+
+In conclusion, the results make it an easy choice to select
+\textit{heuristic\_1} as the default heuristic function used by the Isolation
+game agent.
+
+\end{document}
